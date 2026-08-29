@@ -925,6 +925,102 @@ SERVICES
 
 /*
 ==================================================
+GALLERY
+==================================================
+*/
+
+.gallery-section {
+
+    padding: 110px 8%;
+
+    background: white;
+}
+
+
+.gallery-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+
+    gap: 30px;
+}
+
+
+.gallery-card {
+
+    background: white;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.08);
+
+    transition: .35s;
+}
+
+
+.gallery-card:hover {
+
+    transform: translateY(-10px);
+}
+
+
+.gallery-card img {
+
+    width: 100%;
+
+    height: 240px;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+.gallery-caption {
+
+    padding: 18px;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    color: #0b5d1e;
+}
+
+
+.gallery-btn {
+
+    display: inline-block;
+
+    padding: 16px 40px;
+
+    background: #0b5d1e;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 50px;
+
+    font-weight: 600;
+
+    transition: .3s;
+}
+
+
+.gallery-btn:hover {
+
+    background: #084617;
+}
+
+
+/*
+==================================================
 CONTACT
 ==================================================
 */
@@ -1216,6 +1312,7 @@ DARK MODE
 
 .dark .stat-card,
 .dark .service-card,
+.dark .gallery-card,
 .dark .contact-card,
 .dark .miqat-card {
 
@@ -1420,6 +1517,7 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
         grid-template-columns: 1fr;
     }
 
+    .gallery-grid,
     .contact-grid {
 
         grid-template-columns: 1fr;
@@ -1951,6 +2049,26 @@ SERVICES
 
 
         <a
+            href="photos.php"
+            class="service-card"
+        >
+
+            <div class="service-icon">
+                <i class="fas fa-images"></i>
+            </div>
+
+            <h3>
+                Photo Gallery
+            </h3>
+
+            <p>
+                Browse community event photographs.
+            </p>
+
+        </a>
+
+
+        <a
             href="miqat.php"
             class="service-card"
         >
@@ -2250,6 +2368,10 @@ FOOTER
 
             <a href="profile.php">
                 My Profile
+            </a>
+
+            <a href="photos.php">
+                Gallery
             </a>
 
             <a href="miqat.php">
