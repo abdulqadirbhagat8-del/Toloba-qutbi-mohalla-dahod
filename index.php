@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -327,7 +326,7 @@ nav a {
 
     font-weight: 600;
 
-    color: #333;
+    color: #0b5d1e;
 
     transition: .3s;
 }
@@ -335,7 +334,7 @@ nav a {
 
 nav a:hover {
 
-    color: #0b5d1e;
+    color: #084617;
 }
 
 
@@ -376,6 +375,56 @@ nav a:hover {
     background: #6e1717;
 
     color: white !important;
+}
+
+
+/*
+==================================================
+HAMBURGER MENU (MOBILE)
+==================================================
+*/
+
+.hamburger {
+
+    display: none;
+
+    flex-direction: column;
+
+    cursor: pointer;
+
+    gap: 6px;
+}
+
+
+.hamburger span {
+
+    width: 25px;
+
+    height: 3px;
+
+    background: #0b5d1e;
+
+    border-radius: 2px;
+
+    transition: .3s;
+}
+
+
+.hamburger.active span:nth-child(1) {
+
+    transform: rotate(45deg) translate(10px, 10px);
+}
+
+
+.hamburger.active span:nth-child(2) {
+
+    opacity: 0;
+}
+
+
+.hamburger.active span:nth-child(3) {
+
+    transform: rotate(-45deg) translate(8px, -8px);
 }
 
 
@@ -1307,24 +1356,136 @@ DARK MODE
 }
 
 
-@media(max-width:900px) {
+/*
+==================================================
+RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
+==================================================
+*/
+
+@media(max-width:1200px) {
 
     header {
 
-        flex-direction: column;
-
-        gap: 15px;
-
-        padding: 20px;
+        padding: 12px 25px;
     }
 
     nav {
 
-        flex-wrap: wrap;
+        gap: 16px;
+    }
 
-        justify-content: center;
+    nav a {
 
-        gap: 12px;
+        font-size: 14px;
+    }
+}
+
+
+@media(max-width:900px) {
+
+    header {
+
+        flex-direction: row;
+
+        gap: 15px;
+
+        padding: 15px 20px;
+
+        justify-content: space-between;
+
+        width: 96%;
+    }
+
+    .logo h2 {
+
+        font-size: 20px;
+    }
+
+    .logo img {
+
+        width: 50px;
+
+        height: 50px;
+    }
+
+    .logo span {
+
+        font-size: 11px;
+    }
+
+    .hamburger {
+
+        display: flex;
+    }
+
+    nav {
+
+        position: absolute;
+
+        top: 100%;
+
+        left: 0;
+
+        right: 0;
+
+        background: rgba(255,255,255,.95);
+
+        backdrop-filter: blur(18px);
+
+        flex-direction: column;
+
+        gap: 8px;
+
+        padding: 20px;
+
+        margin-top: 12px;
+
+        border-radius: 20px;
+
+        box-shadow: 0 15px 35px rgba(0,0,0,.12);
+
+        max-height: 0;
+
+        overflow: hidden;
+
+        transition: max-height .3s ease-out;
+
+        width: 95%;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+    }
+
+    nav.active {
+
+        max-height: 500px;
+    }
+
+    nav a {
+
+        padding: 12px 0;
+
+        text-align: center;
+
+        border-bottom: 1px solid #f0f0f0;
+
+        color: #0b5d1e;
+
+        font-weight: 600;
+    }
+
+    nav a:last-child {
+
+        border-bottom: none;
+    }
+
+    .profile-btn,
+    .logout-btn {
+
+        padding: 12px 16px;
+
+        font-size: 14px;
     }
 
     .hero h1 {
@@ -1372,6 +1533,99 @@ DARK MODE
 
         grid-template-columns: 1fr;
     }
+
+    header {
+
+        top: 10px;
+
+        width: 96%;
+
+        padding: 12px 15px;
+    }
+
+    nav {
+
+        width: calc(100% - 30px);
+    }
+}
+
+
+@media(max-width:480px) {
+
+    .logo h2 {
+
+        font-size: 16px;
+    }
+
+    .logo img {
+
+        width: 45px;
+
+        height: 45px;
+    }
+
+    .hero h1 {
+
+        font-size: 32px;
+    }
+
+    .hero p {
+
+        font-size: 16px;
+    }
+
+    .hero-buttons {
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .hero-buttons a {
+
+        padding: 14px 28px;
+
+        font-size: 14px;
+    }
+
+    .section-title {
+
+        font-size: 28px;
+
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+
+        padding: 30px;
+    }
+
+    .stat-card h1 {
+
+        font-size: 36px;
+    }
+
+    .miqat-card {
+
+        padding: 25px;
+    }
+
+    .service-card {
+
+        padding: 25px 20px;
+    }
+
+    .contact-card {
+
+        padding: 25px;
+    }
+
+    nav a {
+
+        padding: 10px 0;
+
+        font-size: 14px;
+    }
 }
 
 </style>
@@ -1409,22 +1663,30 @@ HEADER
 
     </div>
 
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 
-<a href="#miqat">
-    Miqat
-</a>
+    <nav id="navMenu">
 
-<a href="#services">
-    Services
-</a>
+        <a href="#miqat">
+            Miqat
+        </a>
 
-<a href="#gallery">
-    Gallery
-</a>
+        <a href="#services">
+            Services
+        </a>
 
-<a href="#contact">
-    Contact
-</a>
+        <a href="#gallery">
+            Gallery
+        </a>
+
+        <a href="#contact">
+            Contact
+        </a>
+
         <a
             href="profile.php"
             class="profile-btn"
@@ -2134,7 +2396,7 @@ CONTACT
         <div class="contact-card">
 
             <h3>
-               Joint Treasurer
+                Joint Treasurer
             </h3>
 
             <h4>
@@ -2302,11 +2564,42 @@ DARK MODE
 
 <script>
 
+/* Hamburger Menu Toggle */
+
+const hamburger = document.getElementById("hamburger");
+const navMenu = document.getElementById("navMenu");
+
+hamburger.addEventListener("click", function() {
+    hamburger.classList.toggle("active");
+    navMenu.classList.toggle("active");
+});
+
+/* Close menu when link is clicked */
+
+const navLinks = navMenu.querySelectorAll("a");
+
+navLinks.forEach(link => {
+    link.addEventListener("click", function() {
+        hamburger.classList.remove("active");
+        navMenu.classList.remove("active");
+    });
+});
+
+/* Close menu when clicking outside */
+
+document.addEventListener("click", function(event) {
+    const isClickInsideHeader = document.querySelector("header").contains(event.target);
+    
+    if (!isClickInsideHeader) {
+        hamburger.classList.remove("active");
+        navMenu.classList.remove("active");
+    }
+});
+
+
 /* Scroll Button */
 
-const topBtn =
-    document.getElementById("topBtn");
-
+const topBtn = document.getElementById("topBtn");
 
 window.addEventListener(
     "scroll",
@@ -2325,7 +2618,6 @@ window.addEventListener(
     }
 );
 
-
 topBtn.onclick = function() {
 
     window.scrollTo({
@@ -2341,14 +2633,11 @@ topBtn.onclick = function() {
 
 /* Dark Mode */
 
-const themeBtn =
-    document.getElementById("themeBtn");
-
+const themeBtn = document.getElementById("themeBtn");
 
 themeBtn.onclick = function() {
 
     document.body.classList.toggle("dark");
-
 
     if (
         document.body.classList.contains("dark")
@@ -2370,4 +2659,3 @@ themeBtn.onclick = function() {
 </body>
 
 </html>
-```
