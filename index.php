@@ -114,7 +114,6 @@ if ($result) {
 
 $memberCount = 0;
 $postholderCount = 0;
-$photoCount = 0;
 
 
 $result = mysqli_query(
@@ -140,19 +139,6 @@ if ($result) {
     $row = mysqli_fetch_assoc($result);
 
     $postholderCount = $row["total"];
-}
-
-
-$result = mysqli_query(
-    $conn,
-    "SELECT COUNT(*) AS total FROM photos"
-);
-
-if ($result) {
-
-    $row = mysqli_fetch_assoc($result);
-
-    $photoCount = $row["total"];
 }
 
 
@@ -196,6 +182,8 @@ TOLOBA QUTBI MOHALLA
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 
 <style>
@@ -910,6 +898,8 @@ SERVICES
     font-size: 50px;
 
     margin-bottom: 20px;
+
+    color: #0b5d1e;
 }
 
 
@@ -930,102 +920,6 @@ SERVICES
     line-height: 1.8;
 
     font-size: 16px;
-}
-
-
-/*
-==================================================
-GALLERY
-==================================================
-*/
-
-.gallery-section {
-
-    padding: 110px 8%;
-
-    background: white;
-}
-
-
-.gallery-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(300px, 1fr));
-
-    gap: 30px;
-}
-
-
-.gallery-card {
-
-    background: white;
-
-    border-radius: 22px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 15px 35px rgba(0,0,0,.08);
-
-    transition: .35s;
-}
-
-
-.gallery-card:hover {
-
-    transform: translateY(-10px);
-}
-
-
-.gallery-card img {
-
-    width: 100%;
-
-    height: 240px;
-
-    object-fit: cover;
-
-    display: block;
-}
-
-
-.gallery-caption {
-
-    padding: 18px;
-
-    font-weight: 600;
-
-    text-align: center;
-
-    color: #0b5d1e;
-}
-
-
-.gallery-btn {
-
-    display: inline-block;
-
-    padding: 16px 40px;
-
-    background: #0b5d1e;
-
-    color: white;
-
-    text-decoration: none;
-
-    border-radius: 50px;
-
-    font-weight: 600;
-
-    transition: .3s;
-}
-
-
-.gallery-btn:hover {
-
-    background: #084617;
 }
 
 
@@ -1322,7 +1216,6 @@ DARK MODE
 
 .dark .stat-card,
 .dark .service-card,
-.dark .gallery-card,
 .dark .contact-card,
 .dark .miqat-card {
 
@@ -1408,11 +1301,6 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
         height: 50px;
     }
 
-    .logo span {
-
-        font-size: 11px;
-    }
-
     .hamburger {
 
         display: flex;
@@ -1455,9 +1343,13 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
         left: 50%;
 
         transform: translateX(-50%);
+
+        display: none;
     }
 
     nav.active {
+
+        display: flex;
 
         max-height: 500px;
     }
@@ -1528,7 +1420,6 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
         grid-template-columns: 1fr;
     }
 
-    .gallery-grid,
     .contact-grid {
 
         grid-template-columns: 1fr;
@@ -1655,10 +1546,6 @@ HEADER
                 TOLOBA QUTBI MOHALLA
             </h2>
 
-            <span>
-                Dahod Community Portal
-            </span>
-
         </div>
 
     </div>
@@ -1677,10 +1564,6 @@ HEADER
 
         <a href="#services">
             Services
-        </a>
-
-        <a href="#gallery">
-            Gallery
         </a>
 
         <a href="#contact">
@@ -1869,19 +1752,6 @@ STATISTICS
         <div class="stat-card">
 
             <h1>
-                <?php echo $photoCount; ?>
-            </h1>
-
-            <p>
-                Gallery Photos
-            </p>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <h1>
                 1
             </h1>
 
@@ -2045,7 +1915,7 @@ SERVICES
         >
 
             <div class="service-icon">
-                👥
+                <i class="fas fa-users"></i>
             </div>
 
             <h3>
@@ -2065,7 +1935,7 @@ SERVICES
         >
 
             <div class="service-icon">
-                🏅
+                <i class="fas fa-medal"></i>
             </div>
 
             <h3>
@@ -2081,32 +1951,12 @@ SERVICES
 
 
         <a
-            href="photos.php"
-            class="service-card"
-        >
-
-            <div class="service-icon">
-                📷
-            </div>
-
-            <h3>
-                Photo Gallery
-            </h3>
-
-            <p>
-                Browse community event photographs.
-            </p>
-
-        </a>
-
-
-        <a
             href="miqat.php"
             class="service-card"
         >
 
             <div class="service-icon">
-                📅
+                <i class="fas fa-calendar-alt"></i>
             </div>
 
             <h3>
@@ -2126,7 +1976,7 @@ SERVICES
         >
 
             <div class="service-icon">
-                📢
+                <i class="fas fa-bullhorn"></i>
             </div>
 
             <h3>
@@ -2146,7 +1996,7 @@ SERVICES
         >
 
             <div class="service-icon">
-                🕌
+                <i class="fas fa-mosque"></i>
             </div>
 
             <h3>
@@ -2166,7 +2016,7 @@ SERVICES
         >
 
             <div class="service-icon">
-                📞
+                <i class="fas fa-phone"></i>
             </div>
 
             <h3>
@@ -2179,86 +2029,6 @@ SERVICES
 
         </a>
 
-
-    </div>
-
-</section>
-
-
-<!-- ==================================================
-GALLERY
-================================================== -->
-
-<section
-    class="gallery-section"
-    id="gallery"
->
-
-    <h2 class="section-title">
-        Community Gallery
-    </h2>
-
-
-    <div class="gallery-grid">
-
-
-        <?php
-
-        if ($photos) {
-
-            while (
-                $photo = mysqli_fetch_assoc($photos)
-            ) {
-
-        ?>
-
-            <div class="gallery-card">
-
-                <img
-                    src="uploads/<?php
-                    echo htmlspecialchars(
-                        $photo["image"]
-                    );
-                    ?>"
-                    alt="Community Photo"
-                >
-
-                <div class="gallery-caption">
-
-                    <?php
-                    echo htmlspecialchars(
-                        $photo["title"]
-                    );
-                    ?>
-
-                </div>
-
-            </div>
-
-        <?php
-
-            }
-
-        }
-
-        ?>
-
-    </div>
-
-
-    <div
-        style="
-        text-align:center;
-        margin-top:50px;
-        "
-    >
-
-        <a
-            href="photos.php"
-            class="gallery-btn"
-        >
-            View Complete Gallery →
-        </a>
 
     </div>
 
@@ -2345,12 +2115,7 @@ CONTACT
             </p>
 
             <p>
-                ✉
-                <?php
-                echo htmlspecialchars(
-                    $contact["joint_secretary_email"] ?? "-"
-                );
-                ?>
+                ✉ kutubuddinkagdi65@gmail.com
             </p>
 
         </div>
@@ -2432,30 +2197,18 @@ CONTACT
     </div>
 
 
-    <?php if (!empty($contact["instagram"])) { ?>
+    <div class="instagram-box">
 
-        <div class="instagram-box">
+        <a
+            href="https://instagram.com/tkm_dohad_jamiat"
+            target="_blank"
+        >
 
-            <a
-                href="https://instagram.com/<?php
-                    echo htmlspecialchars(
-                        $contact["instagram"]
-                    );
-                ?>"
-                target="_blank"
-            >
+            📸 @tkm_dohad_jamiat
 
-                📸 @<?php
-                echo htmlspecialchars(
-                    $contact["instagram"]
-                );
-                ?>
+        </a>
 
-            </a>
-
-        </div>
-
-    <?php } ?>
+    </div>
 
 </section>
 
@@ -2497,10 +2250,6 @@ FOOTER
 
             <a href="profile.php">
                 My Profile
-            </a>
-
-            <a href="photos.php">
-                Gallery
             </a>
 
             <a href="miqat.php">
@@ -2564,12 +2313,13 @@ DARK MODE
 
 <script>
 
-/* Hamburger Menu Toggle */
+/* Hamburger Menu Toggle - Only opens on click */
 
 const hamburger = document.getElementById("hamburger");
 const navMenu = document.getElementById("navMenu");
 
-hamburger.addEventListener("click", function() {
+hamburger.addEventListener("click", function(e) {
+    e.stopPropagation();
     hamburger.classList.toggle("active");
     navMenu.classList.toggle("active");
 });
@@ -2588,7 +2338,8 @@ navLinks.forEach(link => {
 /* Close menu when clicking outside */
 
 document.addEventListener("click", function(event) {
-    const isClickInsideHeader = document.querySelector("header").contains(event.target);
+    const header = document.querySelector("header");
+    const isClickInsideHeader = header.contains(event.target);
     
     if (!isClickInsideHeader) {
         hamburger.classList.remove("active");
