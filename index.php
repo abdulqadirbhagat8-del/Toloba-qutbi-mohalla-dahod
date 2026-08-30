@@ -142,6 +142,54 @@ if ($result) {
 }
 
 
+/* Get All Members */
+
+$allMembers = [];
+
+$result = mysqli_query(
+    $conn,
+    "SELECT id, full_name, designation, contact_no, its_id FROM members ORDER BY full_name"
+);
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $allMembers[] = $row;
+    }
+}
+
+
+/* Get All Postholders */
+
+$allPostholders = [];
+
+$result = mysqli_query(
+    $conn,
+    "SELECT * FROM postholders ORDER BY designation"
+);
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $allPostholders[] = $row;
+    }
+}
+
+
+/* Get All Photos */
+
+$allPhotos = [];
+
+$result = mysqli_query(
+    $conn,
+    "SELECT * FROM photos ORDER BY id DESC"
+);
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $allPhotos[] = $row;
+    }
+}
+
+
 /* Gallery */
 
 $photos = mysqli_query(
@@ -317,6 +365,8 @@ nav a {
     color: #0b5d1e;
 
     transition: .3s;
+
+    cursor: pointer;
 }
 
 
@@ -793,6 +843,10 @@ MIQAT
     border-radius: 50px;
 
     transition: .3s;
+
+    cursor: pointer;
+
+    border: none;
 }
 
 
@@ -853,6 +907,8 @@ SERVICES
     position: relative;
 
     overflow: hidden;
+
+    cursor: pointer;
 }
 
 
@@ -920,102 +976,6 @@ SERVICES
     line-height: 1.8;
 
     font-size: 16px;
-}
-
-
-/*
-==================================================
-GALLERY
-==================================================
-*/
-
-.gallery-section {
-
-    padding: 110px 8%;
-
-    background: white;
-}
-
-
-.gallery-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(300px, 1fr));
-
-    gap: 30px;
-}
-
-
-.gallery-card {
-
-    background: white;
-
-    border-radius: 22px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 15px 35px rgba(0,0,0,.08);
-
-    transition: .35s;
-}
-
-
-.gallery-card:hover {
-
-    transform: translateY(-10px);
-}
-
-
-.gallery-card img {
-
-    width: 100%;
-
-    height: 240px;
-
-    object-fit: cover;
-
-    display: block;
-}
-
-
-.gallery-caption {
-
-    padding: 18px;
-
-    font-weight: 600;
-
-    text-align: center;
-
-    color: #0b5d1e;
-}
-
-
-.gallery-btn {
-
-    display: inline-block;
-
-    padding: 16px 40px;
-
-    background: #0b5d1e;
-
-    color: white;
-
-    text-decoration: none;
-
-    border-radius: 50px;
-
-    font-weight: 600;
-
-    transition: .3s;
-}
-
-
-.gallery-btn:hover {
-
-    background: #084617;
 }
 
 
@@ -1298,6 +1258,324 @@ THEME BUTTON
 
 /*
 ==================================================
+MODAL STYLES
+==================================================
+*/
+
+.modal {
+
+    display: none;
+
+    position: fixed;
+
+    z-index: 2000;
+
+    left: 0;
+
+    top: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background-color: rgba(0,0,0,0.5);
+
+    overflow-y: auto;
+
+    animation: fadeIn .3s ease-in;
+}
+
+
+@keyframes fadeIn {
+
+    from { opacity: 0; }
+
+    to { opacity: 1; }
+}
+
+
+.modal.active {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.modal-content {
+
+    background-color: white;
+
+    padding: 40px;
+
+    border-radius: 20px;
+
+    width: 90%;
+
+    max-width: 900px;
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    box-shadow: 0 10px 50px rgba(0,0,0,.3);
+
+    animation: slideIn .3s ease-out;
+}
+
+
+@keyframes slideIn {
+
+    from {
+
+        transform: translateY(-50px);
+
+        opacity: 0;
+    }
+
+    to {
+
+        transform: translateY(0);
+
+        opacity: 1;
+    }
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+
+    border-bottom: 2px solid #f0f0f0;
+
+    padding-bottom: 15px;
+}
+
+
+.modal-header h2 {
+
+    color: #0b5d1e;
+
+    font-size: 32px;
+
+    margin: 0;
+}
+
+
+.modal-close {
+
+    background: none;
+
+    border: none;
+
+    font-size: 30px;
+
+    color: #0b5d1e;
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+
+.modal-close:hover {
+
+    color: #084617;
+
+    transform: scale(1.2);
+}
+
+
+.modal-body {
+
+    color: #333;
+
+    line-height: 1.6;
+}
+
+
+.members-list {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+
+.member-item {
+
+    background: #f9f9f9;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    border-left: 4px solid #0b5d1e;
+}
+
+
+.member-item h4 {
+
+    color: #0b5d1e;
+
+    margin-bottom: 8px;
+
+    font-size: 18px;
+}
+
+
+.member-item p {
+
+    margin: 5px 0;
+
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+.postholders-list {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+
+.postholder-item {
+
+    background: #f9f9f9;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    border-left: 4px solid #0b5d1e;
+}
+
+
+.postholder-item h4 {
+
+    color: #0b5d1e;
+
+    margin-bottom: 8px;
+
+    font-size: 18px;
+}
+
+
+.postholder-item p {
+
+    margin: 5px 0;
+
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+.photos-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+
+.photo-item {
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.1);
+}
+
+
+.photo-item img {
+
+    width: 100%;
+
+    height: 200px;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+.photo-caption {
+
+    background: white;
+
+    padding: 12px;
+
+    color: #0b5d1e;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+.profile-modal-content {
+
+    text-align: center;
+}
+
+
+.profile-info {
+
+    background: #f9f9f9;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    margin: 20px 0;
+}
+
+
+.profile-info h3 {
+
+    color: #0b5d1e;
+
+    margin-bottom: 12px;
+}
+
+
+.profile-info p {
+
+    margin: 10px 0;
+
+    color: #666;
+}
+
+
+/*
+==================================================
 DARK MODE
 ==================================================
 */
@@ -1312,7 +1590,6 @@ DARK MODE
 
 .dark .stat-card,
 .dark .service-card,
-.dark .gallery-card,
 .dark .contact-card,
 .dark .miqat-card {
 
@@ -1343,6 +1620,43 @@ DARK MODE
 .dark nav a {
 
     color: white;
+}
+
+
+.dark .modal-content {
+
+    background: #1f1f1f;
+
+    color: white;
+}
+
+
+.dark .modal-header {
+
+    border-bottom: 2px solid #333;
+}
+
+
+.dark .member-item,
+.dark .postholder-item {
+
+    background: #2a2a2a;
+    
+    color: white;
+}
+
+
+.dark .member-item h4,
+.dark .postholder-item h4 {
+
+    color: #4ade80;
+}
+
+
+.dark .member-item p,
+.dark .postholder-item p {
+
+    color: #b0b0b0;
 }
 
 
@@ -1488,6 +1802,19 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
 
         height: 150px;
     }
+
+    .modal-content {
+
+        width: 95%;
+
+        padding: 30px;
+    }
+
+    .members-list,
+    .postholders-list {
+
+        grid-template-columns: 1fr;
+    }
 }
 
 
@@ -1517,7 +1844,6 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
         grid-template-columns: 1fr;
     }
 
-    .gallery-grid,
     .contact-grid {
 
         grid-template-columns: 1fr;
@@ -1615,6 +1941,18 @@ RESPONSIVE DESIGN - MOBILE FRIENDLY NAV
 
         font-size: 14px;
     }
+
+    .modal-content {
+
+        width: 95%;
+
+        padding: 20px;
+    }
+
+    .modal-header h2 {
+
+        font-size: 22px;
+    }
 }
 
 </style>
@@ -1668,10 +2006,7 @@ HEADER
             Contact
         </a>
 
-        <a
-            href="profile.php"
-            class="profile-btn"
-        >
+        <a class="profile-btn" onclick="openModal('profileModal')">
             My Profile
         </a>
 
@@ -1978,12 +2313,9 @@ UPCOMING MIQAT
         </div>
 
 
-        <a
-            href="miqat.php"
-            class="view-miqat"
-        >
+        <button class="view-miqat" onclick="openModal('miqatModal')">
             View Complete Miqat →
-        </a>
+        </button>
 
     </div>
 
@@ -2007,10 +2339,7 @@ SERVICES
     <div class="services-grid">
 
 
-        <a
-            href="members.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('membersModal')">
 
             <div class="service-icon">
                 <i class="fas fa-users"></i>
@@ -2024,13 +2353,10 @@ SERVICES
                 Community member information.
             </p>
 
-        </a>
+        </div>
 
 
-        <a
-            href="postholders.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('postholderModal')">
 
             <div class="service-icon">
                 <i class="fas fa-medal"></i>
@@ -2045,13 +2371,10 @@ SERVICES
                 Toloba Qutbi Mohalla.
             </p>
 
-        </a>
+        </div>
 
 
-        <a
-            href="photos.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('photosModal')">
 
             <div class="service-icon">
                 <i class="fas fa-images"></i>
@@ -2065,13 +2388,10 @@ SERVICES
                 Browse community event photographs.
             </p>
 
-        </a>
+        </div>
 
 
-        <a
-            href="miqat.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('miqatModal')">
 
             <div class="service-icon">
                 <i class="fas fa-calendar-alt"></i>
@@ -2085,13 +2405,10 @@ SERVICES
                 Latest Miqat schedule and details.
             </p>
 
-        </a>
+        </div>
 
 
-        <a
-            href="miqatkhidmat.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('khidmatModal')">
 
             <div class="service-icon">
                 <i class="fas fa-bullhorn"></i>
@@ -2105,13 +2422,10 @@ SERVICES
                 Latest Khidmat announcements and duties.
             </p>
 
-        </a>
+        </div>
 
 
-        <a
-            href="ashara.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('asharaModal')">
 
             <div class="service-icon">
                 <i class="fas fa-mosque"></i>
@@ -2125,13 +2439,10 @@ SERVICES
                 Ashara information and programme details.
             </p>
 
-        </a>
+        </div>
 
 
-        <a
-            href="contact.php"
-            class="service-card"
-        >
+        <div class="service-card" onclick="openModal('contactModal')">
 
             <div class="service-icon">
                 <i class="fas fa-phone"></i>
@@ -2145,7 +2456,7 @@ SERVICES
                 Secretary, Treasurer and office contacts.
             </p>
 
-        </a>
+        </div>
 
 
     </div>
@@ -2362,31 +2673,31 @@ FOOTER
 
         <div class="footer-links">
 
-            <a href="index.php">
+            <a href="#top">
                 Home
             </a>
 
-            <a href="profile.php">
+            <a onclick="openModal('profileModal')">
                 My Profile
             </a>
 
-            <a href="photos.php">
+            <a onclick="openModal('photosModal')">
                 Gallery
             </a>
 
-            <a href="miqat.php">
+            <a onclick="openModal('miqatModal')">
                 Miqat
             </a>
 
-            <a href="ashara.php">
+            <a onclick="openModal('asharaModal')">
                 Ashara
             </a>
 
-            <a href="contact.php">
+            <a onclick="openModal('contactModal')">
                 Contact
             </a>
 
-            <a href="logout.php">
+            <a href="website_logout.php">
                 Logout
             </a>
 
@@ -2433,7 +2744,266 @@ DARK MODE
 </button>
 
 
+<!-- ==================================================
+MODALS
+================================================== -->
+
+<!-- MEMBERS MODAL -->
+<div id="membersModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Community Members</h2>
+            <button class="modal-close" onclick="closeModal('membersModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="members-list">
+                <?php foreach ($allMembers as $mem): ?>
+                    <div class="member-item">
+                        <h4><?php echo htmlspecialchars($mem["full_name"]); ?></h4>
+                        <p><strong>ITS ID:</strong> <?php echo htmlspecialchars($mem["its_id"]); ?></p>
+                        <p><strong>Designation:</strong> <?php echo htmlspecialchars($mem["designation"]); ?></p>
+                        <p><strong>Contact:</strong> <?php echo htmlspecialchars($mem["contact_no"]); ?></p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- POSTHOLDERS MODAL -->
+<div id="postholderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Post Holders</h2>
+            <button class="modal-close" onclick="closeModal('postholderModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="postholders-list">
+                <?php foreach ($allPostholders as $ph): ?>
+                    <div class="postholder-item">
+                        <h4><?php echo htmlspecialchars($ph["name"]); ?></h4>
+                        <p><strong>Position:</strong> <?php echo htmlspecialchars($ph["designation"]); ?></p>
+                        <p><strong>Contact:</strong> <?php echo htmlspecialchars($ph["contact"]); ?></p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PHOTOS MODAL -->
+<div id="photosModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Photo Gallery</h2>
+            <button class="modal-close" onclick="closeModal('photosModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="photos-grid">
+                <?php foreach ($allPhotos as $photo): ?>
+                    <div class="photo-item">
+                        <img src="uploads/<?php echo htmlspecialchars($photo["image"]); ?>" alt="Community Photo">
+                        <div class="photo-caption"><?php echo htmlspecialchars($photo["title"]); ?></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MIQAT MODAL -->
+<div id="miqatModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Upcoming Miqat</h2>
+            <button class="modal-close" onclick="closeModal('miqatModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="miqat-card">
+                <div class="miqat-row">
+                    <span>Miqat Name</span>
+                    <strong><?php echo htmlspecialchars($miqat["miqat_name"] ?? "-"); ?></strong>
+                </div>
+                <div class="miqat-row">
+                    <span>Hijri Date</span>
+                    <strong><?php echo htmlspecialchars($miqat["hijri_date"] ?? "-"); ?></strong>
+                </div>
+                <div class="miqat-row">
+                    <span>English Date</span>
+                    <strong><?php echo htmlspecialchars($miqat["english_date"] ?? "-"); ?></strong>
+                </div>
+                <div class="miqat-row">
+                    <span>Venue</span>
+                    <strong><?php echo htmlspecialchars($miqat["venue"] ?? "-"); ?></strong>
+                </div>
+                <div class="miqat-row">
+                    <span>Miqat Incharge</span>
+                    <strong><?php echo htmlspecialchars($miqat["incharge"] ?? "-"); ?></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KHIDMAT MODAL -->
+<div id="khidmatModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Miqat Khidmat</h2>
+            <button class="modal-close" onclick="closeModal('khidmatModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="text-align: center; color: #666; padding: 40px;">
+                Khidmat information and duties details will be displayed here.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ASHARA MODAL -->
+<div id="asharaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Ashara 1449</h2>
+            <button class="modal-close" onclick="closeModal('asharaModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="text-align: center; color: #666; padding: 40px;">
+                Ashara information and programme details will be displayed here.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Contact Information</h2>
+            <button class="modal-close" onclick="closeModal('contactModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h3>Secretary</h3>
+                    <h4><?php echo htmlspecialchars($contact["secretary_name"] ?? "-"); ?></h4>
+                    <p>📞 <?php echo htmlspecialchars($contact["secretary_contact"] ?? "-"); ?></p>
+                    <p>✉ <?php echo htmlspecialchars($contact["secretary_email"] ?? "-"); ?></p>
+                </div>
+                <div class="contact-card">
+                    <h3>Joint Secretary</h3>
+                    <h4><?php echo htmlspecialchars($contact["joint_secretary_name"] ?? "-"); ?></h4>
+                    <p>📞 <?php echo htmlspecialchars($contact["joint_secretary_contact"] ?? "-"); ?></p>
+                    <p>✉ kutubuddinkagdi65@gmail.com</p>
+                </div>
+                <div class="contact-card">
+                    <h3>Treasurer</h3>
+                    <h4><?php echo htmlspecialchars($contact["treasurer_name"] ?? "-"); ?></h4>
+                    <p>📞 <?php echo htmlspecialchars($contact["treasurer_contact"] ?? "-"); ?></p>
+                    <p>✉ <?php echo htmlspecialchars($contact["treasurer_email"] ?? "-"); ?></p>
+                </div>
+                <div class="contact-card">
+                    <h3>Joint Treasurer</h3>
+                    <h4><?php echo htmlspecialchars($contact["it_admin_name"] ?? "-"); ?></h4>
+                    <p>📞 <?php echo htmlspecialchars($contact["it_admin_contact"] ?? "-"); ?></p>
+                    <p>✉ <?php echo htmlspecialchars($contact["it_admin_email"] ?? "-"); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>My Profile</h2>
+            <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+        </div>
+        <div class="modal-body profile-modal-content">
+            <div class="profile-info">
+                <h3>Full Name</h3>
+                <p><?php echo htmlspecialchars($member["full_name"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>ITS ID</h3>
+                <p><?php echo htmlspecialchars($member["its_id"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Designation</h3>
+                <p><?php echo htmlspecialchars($member["designation"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Contact Number</h3>
+                <p><?php echo htmlspecialchars($member["contact_no"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Age</h3>
+                <p><?php echo htmlspecialchars($member["age"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Jamiat</h3>
+                <p><?php echo htmlspecialchars($member["jamiat"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Jamaat</h3>
+                <p><?php echo htmlspecialchars($member["jamaat"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Zone</h3>
+                <p><?php echo htmlspecialchars($member["zone"]); ?></p>
+            </div>
+            <div class="profile-info">
+                <h3>Status</h3>
+                <p><?php echo htmlspecialchars($member["status"]); ?></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
+
+/* Modal Functions */
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+/* Close modal when clicking outside */
+window.addEventListener('click', function(event) {
+    const modals = document.querySelectorAll('.modal.active');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+});
+
+/* Close modal with Escape key */
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modals = document.querySelectorAll('.modal.active');
+        modals.forEach(modal => {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+    }
+});
+
 
 /* Hamburger Menu Toggle - Only opens on click */
 
