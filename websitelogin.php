@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($username === "" || $password === "") {
 
-        $error = "Please enter your Member Number and Password.";
+        $error = "Please enter your ITS No. and Password.";
 
     } else {
 
@@ -205,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         } else {
 
-            $error = "Member Number not found.";
+            $error = "ITS No. not found.";
 
         }
 
@@ -554,11 +554,7 @@ h1 {
 
 
         <p class="subtitle">
-
-            TOLOBA QUTBI MOHALLA<br>
-
-            Dahod Community Portal
-
+            TOLOBA QUTBI MOHALLA
         </p>
 
 
@@ -586,13 +582,13 @@ h1 {
             <div class="input-group">
 
                 <label>
-                    Member Number
+                    ITS No.
                 </label>
 
                 <input
                     type="text"
                     name="username"
-                    placeholder="Enter your Member Number"
+                    placeholder="Enter your ITS No."
                     autocomplete="username"
                     required
                 >
