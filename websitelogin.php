@@ -3,6 +3,7 @@
 session_start();
 
 require_once "config.php";
+require_once "session_manager.php";
 
 
 /*
@@ -19,7 +20,95 @@ if (isset($_SESSION["member_id"])) {
 }
 
 
+/*
+==================================================
+CHECK FOR PERSISTENT LOGIN TOKEN
+==================================================
+*/
+
+if (!isset($_SESSION["member_id"]) && isset($_COOKIE["login_token"])) {
+
+    $login_token = $_COOKIE["login_token"];
+    $sessionManager = new SessionManager($conn);
+
+    /*
+    Verify token from cookie
+    */
+
+    $token_hash = hash('sha256', $login_token);
+
+    $stmt = $conn->prepare("
+        SELECT member_id
+        FROM login_tokens
+        WHERE token_hash = ?
+        AND expires_at > NOW()
+        AND is_revoked = 0
+        LIMIT 1
+    ");
+
+    $stmt->bind_param("s", $token_hash);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+
+        $tokenRow = $result->fetch_assoc();
+        $member_id = $tokenRow["member_id"];
+
+        /*
+        Get member details
+        */
+
+        $memberStmt = $conn->prepare("
+            SELECT id, full_name, its_id
+            FROM members
+            WHERE id = ?
+            LIMIT 1
+        ");
+
+        $memberStmt->bind_param("i", $member_id);
+        $memberStmt->execute();
+
+        $memberResult = $memberStmt->get_result();
+
+        if ($memberResult->num_rows === 1) {
+
+            $member = $memberResult->fetch_assoc();
+
+            /*
+            Create new session
+            */
+
+            session_regenerate_id(true);
+
+            $_SESSION["member_id"] = $member["id"];
+            $_SESSION["member_its_id"] = $member["its_id"];
+            $_SESSION["member_name"] = $member["full_name"];
+            $_SESSION["member_logged_in"] = true;
+
+            /*
+            Refresh token expiration
+            */
+
+            $sessionManager->refreshLoginToken($login_token);
+
+            header("Location: index.php");
+            exit;
+
+        }
+
+        $memberStmt->close();
+
+    }
+
+    $stmt->close();
+
+}
+
+
 $error = "";
+$showLogoutOtherDevices = false;
 
 
 /*
@@ -31,8 +120,8 @@ MEMBER LOGIN
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $username = trim($_POST["username"] ?? "");
-
     $password = $_POST["password"] ?? "";
+    $logout_other_devices = isset($_POST["logout_other_devices"]) ? true : false;
 
 
     if ($username === "" || $password === "") {
@@ -167,6 +256,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $_SESSION["member_logged_in"] =
                     true;
+
+
+                /*
+                ==================================
+                HANDLE LOGOUT FROM OTHER DEVICES
+                ==================================
+                */
+
+                if ($logout_other_devices) {
+
+                    $sessionManager = new SessionManager($conn);
+                    $sessionManager->logoutOtherDevices($member["id"]);
+
+                }
+
+
+                /*
+                ==================================
+                CREATE PERSISTENT LOGIN TOKEN
+                ==================================
+                */
+
+                $sessionManager = new SessionManager($conn);
+                $loginToken = $sessionManager->createLoginToken($member["id"]);
+
+                if ($loginToken) {
+
+                    setcookie(
+                        "login_token",
+                        $loginToken,
+                        time() + 2592000, // 30 days
+                        "/",
+                        "",
+                        isset($_SERVER["HTTPS"]),
+                        true // HttpOnly
+                    );
+
+                }
 
 
                 /*
@@ -404,6 +531,64 @@ h1 {
 }
 
 
+.checkbox-group {
+
+    text-align: left;
+
+    margin-bottom: 22px;
+
+    padding: 15px;
+
+    background: #f9f9f9;
+
+    border-radius: 12px;
+
+    border: 1px solid #eee;
+
+}
+
+
+.checkbox-group label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 0;
+
+    font-weight: 500;
+
+    color: #666;
+
+    cursor: pointer;
+
+}
+
+
+.checkbox-group input[type="checkbox"] {
+
+    width: auto;
+
+    cursor: pointer;
+
+}
+
+
+.checkbox-group p {
+
+    font-size: 12px;
+
+    color: #999;
+
+    margin-top: 8px;
+
+    margin-bottom: 0;
+
+}
+
+
 .login-button {
 
     width: 100%;
@@ -609,6 +794,25 @@ h1 {
                     autocomplete="current-password"
                     required
                 >
+
+            </div>
+
+
+            <div class="checkbox-group">
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        name="logout_other_devices"
+                        value="1"
+                    >
+
+                    <span>Log out from other devices</span>
+
+                </label>
+
+                <p>If checked, you will be logged out from all other devices when you login here.</p>
 
             </div>
 
