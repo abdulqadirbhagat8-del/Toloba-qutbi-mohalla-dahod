@@ -7,6 +7,64 @@ if (!isset($conn)) {
     exit;
 }
 
+function send_weekly_lavazim_reminders($conn)
+{
+    if (!$conn || !table_exists($conn, 'members') || !table_exists($conn, 'lavazim_payments')) {
+        return 0;
+    }
+
+    $sql = "
+        SELECT id, full_name
+        FROM members
+        WHERE status != 'Inactive' OR status IS NULL
+    ";
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return 0;
+    }
+
+    $sent = 0;
+
+    while ($member = $result->fetch_assoc()) {
+        $member_id = (int) $member['id'];
+        $status = get_lavazim_status($conn, $member_id);
+
+        $title = $status['is_paid'] ? 'Lavazim Payment Status' : 'Lavazim Payment Pending';
+        $message = $status['is_paid']
+            ? 'Your Lavazim payment has been marked as paid.'
+            : 'Your Lavazim payment is still pending. Please complete it as soon as possible.';
+
+        if (create_notification($conn, $member_id, 'lavazim_reminder', $title, $message, $member_id)) {
+            $sent++;
+        }
+    }
+
+    return $sent;
+}
+
+function send_miqat_notifications($conn, $message = null)
+{
+    if (!$conn || !table_exists($conn, 'members')) {
+        return 0;
+    }
+
+    $default_message = $message ?: 'A new Miqat update is available for the community.';
+    $result = $conn->query("SELECT id FROM members");
+    if (!$result) {
+        return 0;
+    }
+
+    $sent = 0;
+    while ($member = $result->fetch_assoc()) {
+        if (create_notification($conn, (int) $member['id'], 'miqat', 'Miqat Update', $default_message, (int) $member['id'])) {
+            $sent++;
+        }
+    }
+
+    return $sent;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_lavazim_reminders'])) {
     $sent = send_weekly_lavazim_reminders($conn);
     echo "Sent " . $sent . " Lavazim reminder notifications.";
@@ -26,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_all'])) {
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

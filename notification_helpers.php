@@ -148,3 +148,19 @@ function get_miscellaneous_payments($conn, $member_id)
 
     return $items;
 }
+
+function notify_photo_upload($conn, $member_id)
+{
+    if (!$conn || !is_numeric($member_id)) {
+        return false;
+    }
+
+    return create_notification(
+        $conn,
+        (int) $member_id,
+        "photo_upload",
+        "New Photo Uploaded",
+        "A new profile photo has been uploaded successfully.",
+        (int) $member_id
+    );
+}

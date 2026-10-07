@@ -5,11 +5,13 @@
 DATABASE MIGRATION
 ==================================================
 Creates necessary tables for new features:
-- login_tokens (for persistent login)
-- lavazim_payments (payment tracking)
-- miscellaneous_contributions (flexible payment system)
-- notifications (notification system)
-- otp_verifications (OTP for first login)
+- login_tokens
+- lavazim_payments
+- miscellaneous_contribution_types
+- miscellaneous_contributions
+- notifications
+- otp_verifications
+- notification_log
 ==================================================
 */
 
@@ -17,11 +19,6 @@ require_once "config.php";
 
 $migrations = [
 
-    /*
-    ==================================================
-    LOGIN TOKENS TABLE
-    ==================================================
-    */
     "CREATE TABLE IF NOT EXISTS login_tokens (
         id INT AUTO_INCREMENT PRIMARY KEY,
         member_id INT NOT NULL,
@@ -36,11 +33,6 @@ $migrations = [
         INDEX idx_expires (expires_at)
     )",
 
-    /*
-    ==================================================
-    LAVAZIM PAYMENTS TABLE
-    ==================================================
-    */
     "CREATE TABLE IF NOT EXISTS lavazim_payments (
         id INT AUTO_INCREMENT PRIMARY KEY,
         member_id INT NOT NULL,
@@ -55,11 +47,6 @@ $migrations = [
         INDEX idx_payment_status (is_paid)
     )",
 
-    /*
-    ==================================================
-    MISCELLANEOUS CONTRIBUTIONS TABLE
-    ==================================================
-    */
     "CREATE TABLE IF NOT EXISTS miscellaneous_contribution_types (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -85,11 +72,6 @@ $migrations = [
         INDEX idx_type (contribution_type_id)
     )",
 
-    /*
-    ==================================================
-    NOTIFICATIONS TABLE
-    ==================================================
-    */
     "CREATE TABLE IF NOT EXISTS notifications (
         id INT AUTO_INCREMENT PRIMARY KEY,
         member_id INT NOT NULL,
@@ -106,11 +88,6 @@ $migrations = [
         INDEX idx_created (created_at)
     )",
 
-    /*
-    ==================================================
-    OTP VERIFICATIONS TABLE
-    ==================================================
-    */
     "CREATE TABLE IF NOT EXISTS otp_verifications (
         id INT AUTO_INCREMENT PRIMARY KEY,
         member_id INT NOT NULL,
@@ -127,13 +104,6 @@ $migrations = [
         INDEX idx_expires (expires_at)
     )",
 
-    /*
-    ==================================================
-    NOTIFICATION LOG TABLE
-    ==================================================
-    Tracks when notifications were sent to prevent duplicates
-    ==================================================
-    */
     "CREATE TABLE IF NOT EXISTS notification_log (
         id INT AUTO_INCREMENT PRIMARY KEY,
         member_id INT NOT NULL,
@@ -143,20 +113,12 @@ $migrations = [
         FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
         UNIQUE KEY unique_member_type_date (member_id, notification_type, sent_date)
     )"
-
 ];
-
-/*
-==================================================
-EXECUTE MIGRATIONS
-==================================================
-*/
 
 $success = true;
 $results = [];
 
 foreach ($migrations as $index => $sql) {
-    
     if ($conn->query($sql)) {
         $results[] = [
             'index' => $index + 1,
@@ -173,12 +135,6 @@ foreach ($migrations as $index => $sql) {
     }
 }
 
-/*
-==================================================
-INSERT DEFAULT MISCELLANEOUS CONTRIBUTION TYPES
-==================================================
-*/
-
 $default_types = [
     'Coffee Unit',
     'Hasan Imam Shahadat',
@@ -188,15 +144,14 @@ $default_types = [
 ];
 
 foreach ($default_types as $type) {
-    
     $check = $conn->prepare("
-        SELECT id FROM miscellaneous_contribution_types 
+        SELECT id FROM miscellaneous_contribution_types
         WHERE name = ?
     ");
     $check->bind_param("s", $type);
     $check->execute();
     $check_result = $check->get_result();
-    
+
     if ($check_result->num_rows === 0) {
         $insert = $conn->prepare("
             INSERT INTO miscellaneous_contribution_types (name, is_active)
@@ -208,7 +163,6 @@ foreach ($default_types as $type) {
     }
     $check->close();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -218,83 +172,29 @@ foreach ($default_types as $type) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Migration Results</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        body {
-            background: #f5f7f8;
-            padding: 40px 20px;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,.1);
-        }
-        
-        h1 {
-            color: #0b5d1e;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-        
-        .result-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border-left: 4px solid;
-        }
-        
-        .result-item.success {
-            background: #e8f5e9;
-            border-left-color: #4caf50;
-            color: #2e7d32;
-        }
-        
-        .result-item.error {
-            background: #ffebee;
-            border-left-color: #f44336;
-            color: #c62828;
-        }
-        
-        .result-item strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .summary {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            border-left: 4px solid #0b5d1e;
-        }
-        
-        .summary p {
-            margin: 8px 0;
-            color: #666;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #f5f7f8; padding: 40px 20px; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.1); }
+        h1 { color: #0b5d1e; margin-bottom: 30px; font-size: 28px; }
+        .result-item { padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid; }
+        .result-item.success { background: #e8f5e9; border-left-color: #4caf50; color: #2e7d32; }
+        .result-item.error { background: #ffebee; border-left-color: #f44336; color: #c62828; }
+        .result-item strong { display: block; margin-bottom: 5px; }
+        .summary { margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #0b5d1e; }
+        .summary p { margin: 8px 0; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Database Migration Results</h1>
-        
+
         <?php foreach ($results as $result): ?>
             <div class="result-item <?php echo $result['status']; ?>">
                 <strong>Migration #<?php echo $result['index']; ?>: <?php echo ucfirst($result['status']); ?></strong>
                 <?php echo $result['message']; ?>
             </div>
         <?php endforeach; ?>
-        
+
         <div class="summary">
             <p><strong>Summary:</strong></p>
             <p>Total Migrations: <?php echo count($results); ?></p>
